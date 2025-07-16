@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recovery Tools Store</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">RecoveryTools</div>
+    <nav>
+      <ul>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#cart">Cart (<span id="cart-count">0</span>)</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Best Recovery Tools at Your Fingertips</h1>
+    <p>Data Recovery | FRP Unlock | Mobile & PC Repair Tools</p>
+    <a href="#products" class="btn">Shop Now</a>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="products">
+    <h2>Featured Tools</h2>
+    <div class="product-grid">
+      <div class="product-card" data-name="FRP Bypass Tool" data-price="2999">
+        <img src="https://via.placeholder.com/200" alt="Tool 1"/>
+        <h3>Android FRP Bypass Tool</h3>
+        <p>$50</p>
+        <p class="description">Quickly unlock Android devices locked with Factory Reset Protection (FRP). Ideal for technicians handling Samsung, LG, and other Android devices.</p>
+        <p>Rating: ⭐⭐⭐⭐☆</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="product-card" data-name="Data Recovery Software" data-price="4999">
+        <img src="https://via.placeholder.com/200" alt="Tool 2"/>
+        <h3>Data Recovery Software</h3>
+        <p>$50</p>
+        <p class="description">Recover lost files from corrupted hard drives, USBs, memory cards and smartphones. Supports over 100+ file types.</p>
+        <p>Rating: ⭐⭐⭐⭐⭐</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="product-card" data-name="iPhone Toolkit" data-price="1999">
+        <img src="https://via.placeholder.com/200" alt="Tool 3"/>
+        <h3>iPhone Repair Toolkit</h3>
+        <p>$50</p>
+        <p class="description">Complete toolkit for opening, repairing, and servicing iPhones and other Apple devices. Great for beginners and professionals.</p>
+        <p>Rating: ⭐⭐⭐⭐☆</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cart Section -->
+  <section id="cart" class="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <p id="cart-total">Total: $0.00</p>
+    <button onclick="payWithPaystack()">Checkout with Paystack</button>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <h2>About Us</h2>
+    <p>We provide high-quality recovery tools for technicians, repair shops, and DIY users. Trusted by professionals worldwide.</p>
+  </section>
+
+  <!-- Contact Footer -->
+  <footer id="contact">
+    <h3>Contact Us</h3>
+    <p>Email: support@recoverytools.com</p>
+    <p>WhatsApp: +1234567890</p>
+    <p>Telegram: <a href="https://t.me/cassiusdev" target="_blank">@cassiusdev</a></p>
+    <p>&copy; 2025 RecoveryTools. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let cart = [];
+
+    function addToCart(button) {
+      const card = button.closest('.product-card');
+      const name = card.dataset.name;
+      const price = parseInt(card.dataset.price);
+      cart.push({ name, price });
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      const totalDisplay = document.getElementById('cart-total');
+      const cartCount = document.getElementById('cart-count');
+      cartList.innerHTML = '';
+      let total = 0;
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${(item.price / 100).toFixed(2)}`;
+        cartList.appendChild(li);
+        total += item.price;
+      });
+      totalDisplay.textContent = `Total: $${(total / 100).toFixed(2)}`;
+      cartCount.textContent = cart.length;
+    }
+
+    function payWithPaystack() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      const handler = PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
+        email: 'customer@email.com',
+        amount: total,
+        currency: 'USD',
+        callback: function(response) {
+          alert('Payment complete! Reference: ' + response.reference);
+          cart = [];
+          updateCart();
+        },
+        onClose: function() {
+          alert('Payment window closed.');
+        }
+      });
+      handler.openIframe();
+    }
+  </script>
+</body>
+</html>
